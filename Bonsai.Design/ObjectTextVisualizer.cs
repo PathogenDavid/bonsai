@@ -75,6 +75,7 @@ namespace Bonsai.Design
         {
             foreach (char c in rawText)
             {
+#if true
                 switch (c)
                 {
                     // Carriage returns are presumed to be followed by line feeds, skip them entirely
@@ -100,6 +101,72 @@ namespace Bonsai.Design
                         stringBuilder.Append(c);
                         break;
                 }
+#elif false
+                // To give point of reference we represent strings as they'd be represented in C# string literals
+                var replacement = c switch
+                {
+                    '\\' => @"\\", // Backslash
+                    '"' => "\\\"", // Double quote
+                    '\n' => @"\n", // Line feed
+                    '\r' => @"\r", // Carriage return
+                    '\x0085' => @"\x0085", // Next line character (NEL)
+                    '\x2028' => @"\x2028", // Unicode line separator
+                    '\x2029' => @"\x2029", // Unicode paragraph separator
+                    '\0' => @"\0", // Null
+                    '\a' => @"\a", // Alert
+                    '\b' => @"\b", // Backspace
+                    '\f' => @"\f", // Form feed
+                    '\t' => @"\t", // Tab
+                    '\v' => @"\v", // Vertical tab
+                    < ' ' => $@"\u{c:X4}", // Misc control characters
+                    _ => null,
+                };
+
+                if (replacement is null)
+                    stringBuilder.Append(c);
+                else
+                    stringBuilder.Append(replacement);
+#else
+                char replacement = c switch
+                {
+                    '\x0000' => '␀',
+                    '\x0001' => '␁',
+                    '\x0002' => '␂',
+                    '\x0003' => '␃',
+                    '\x0004' => '␄',
+                    '\x0005' => '␅',
+                    '\x0006' => '␆',
+                    '\x0007' => '␇',
+                    '\x0008' => '␈',
+                    '\x0009' => '␉',
+                    '\x000A' => '␊',
+                    '\x000B' => '␋',
+                    '\x000C' => '␌',
+                    '\x000D' => '␍',
+                    '\x000E' => '␎',
+                    '\x000F' => '␏',
+                    '\x0010' => '␐',
+                    '\x0011' => '␑',
+                    '\x0012' => '␒',
+                    '\x0013' => '␓',
+                    '\x0014' => '␔',
+                    '\x0015' => '␕',
+                    '\x0016' => '␖',
+                    '\x0017' => '␗',
+                    '\x0018' => '␘',
+                    '\x0019' => '␙',
+                    '\x001A' => '␚',
+                    '\x001B' => '␛',
+                    '\x001C' => '␜',
+                    '\x001D' => '␝',
+                    '\x001E' => '␞',
+                    '\x001F' => '␟',
+                    '\x007F' => '␡',
+                    _ => c,
+                };
+
+                stringBuilder.Append(replacement);
+#endif
             }
         }
 
