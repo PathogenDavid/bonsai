@@ -75,30 +75,31 @@ namespace Bonsai.Design
         {
             foreach (char c in rawText)
             {
-                // To give point of reference we represent strings as they'd be represented in C# string literals
-                var replacement = c switch
+                switch (c)
                 {
-                    '\\' => @"\\", // Backslash
-                    '"' => "\\\"", // Double quote
-                    '\n' => @"\n", // Line feed
-                    '\r' => @"\r", // Carriage return
-                    '\x0085' => @"\x0085", // Next line character (NEL)
-                    '\x2028' => @"\x2028", // Unicode line separator
-                    '\x2029' => @"\x2029", // Unicode paragraph separator
-                    '\0' => @"\0", // Null
-                    '\a' => @"\a", // Alert
-                    '\b' => @"\b", // Backspace
-                    '\f' => @"\f", // Form feed
-                    '\t' => @"\t", // Tab
-                    '\v' => @"\v", // Vertical tab
-                    < ' ' => $@"\u{c:X4}", // Misc control characters
-                    _ => null,
-                };
-
-                if (replacement is null)
-                    stringBuilder.Append(c);
-                else
-                    stringBuilder.Append(replacement);
+                    // Carriage returns are presumed to be followed by line feeds, skip them entirely
+                    case '\r':
+                        continue;
+                    // Newlines become space so that things like multi-line JSON or matricies are still visible
+                    case '\n':
+                    case '\x0085': // Next line character (NEL)
+                    case '\x2028': // Unicode line separator
+                    case '\x2029': // Unicode paragraph separator
+                        stringBuilder.Append(' ');
+                        break;
+                    case '\t':
+                        stringBuilder.Append(c);
+                        break;
+                    // Replace all other control characters with the unknown replacement character
+                    case < ' ': // C0 control characters
+                    case '\x007F': // Delete
+                    case >= '\x0080' and <= '\x009F': // C1 control characters
+                        stringBuilder.Append('\xFFFD');
+                        break;
+                    default:
+                        stringBuilder.Append(c);
+                        break;
+                }
             }
         }
 
