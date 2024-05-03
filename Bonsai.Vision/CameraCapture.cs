@@ -39,15 +39,28 @@ namespace Bonsai.Vision
                             captureProperties.Capture = capture;
                             try
                             {
+                                int consecutiveErrorCount = 0;
                                 while (!cancellationToken.IsCancellationRequested)
                                 {
                                     var image = captureProperties.Capture.QueryFrame();
                                     if (image == null)
                                     {
-                                        observer.OnError(new InvalidOperationException("Unable to acquire camera frame."));
-                                        break;
+#if DEBUG
+                                        // We ignore sporadic dropped frames in debug builds in order to avoid killing the workflow when paused in the debugger
+                                        Console.Error.WriteLine("Unable to acquire camera frame.");
+                                        consecutiveErrorCount++;
+                                        if (consecutiveErrorCount >= 3)
+#endif
+                                        {
+                                            observer.OnError(new InvalidOperationException("Unable to acquire camera frame."));
+                                            break;
+                                        }
                                     }
-                                    else observer.OnNext(image.Clone());
+                                    else
+                                    {
+                                        observer.OnNext(image.Clone());
+                                        consecutiveErrorCount = 0;
+                                    }
                                 }
                             }
                             finally { captureProperties.Capture = null; }
