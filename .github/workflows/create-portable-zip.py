@@ -48,7 +48,7 @@ with zipfile.ZipFile(output_path, 'x', zipfile.ZIP_DEFLATED, compresslevel=9) as
         nuget_config.append('      <add key="ClearTextPassword" value="YOUR_GITHUB_PERSONAL_ACCESS_TOKEN" />')
         nuget_config.append('    </Bonsai_x0020_Unstable>')
         nuget_config.append('  </packageSourceCredentials>')
-    else:    
+    else:
         nuget_config.append('  </packageSources>')
 
     nuget_config.append('</configuration>')

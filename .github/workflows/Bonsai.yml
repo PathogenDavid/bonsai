@@ -101,7 +101,7 @@ jobs:
           release_version: ${{github.event.release.tag_name}}
           workflow_dispatch_version: ${{github.event.inputs.version}}
           workflow_dispatch_will_publish_packages: ${{github.event.inputs.will_publish_packages}}
-   
+
       # ----------------------------------------------------------------------- Build
       - name: Restore
         run: dotnet restore Bonsai.sln
@@ -153,7 +153,7 @@ jobs:
         id: create-installer
         if: matrix.create-installer
         run: msbuild /nologo /maxCpuCount Bonsai.Setup.sln /p:Configuration=${{matrix.configuration}}
-      
+
       # ----------------------------------------------------------------------- Collect artifacts
       - name: Collect NuGet packages
         uses: actions/upload-artifact@v4
@@ -412,7 +412,7 @@ jobs:
         env:
           version_file_path: tooling/CurrentVersion.props
           just_released_version: ${{github.event.release.tag_name}}
-      
+
       # ----------------------------------------------------------------------- Commit and push changes
       - name: Commit changes
         if: steps.main-revision.outputs.sha == github.sha

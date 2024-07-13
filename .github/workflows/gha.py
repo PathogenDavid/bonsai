@@ -37,7 +37,7 @@ def github_file_command(command, message):
     if not os.path.exists(command_file):
         print_error(f"'{command}' points to non-existent file '{command_file}')")
         sys.exit(1)
-    
+
     with open(command_file, 'a') as command_file_handle:
         command_file_handle.write(message)
         command_file_handle.write('\n')
@@ -70,14 +70,14 @@ class JobSummary:
 
     def __enter__(self):
         return self
-    
+
     def write_line(self, line: str = '') -> None:
         if self.file is None:
             return
-        
+
         self.file.write(line)
         self.file.write('\n')
-    
+
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
         if self.file is not None:
             self.file.__exit__(exc_type, exc_val, exc_tb)
@@ -93,12 +93,12 @@ if __name__ == "__main__":
         result = args[0]
         args = args[1:]
         return result
-    
+
     def done_parsing():
         if len(args) > 0:
             print_error("Bad command line, too many arguments specified.")
             sys.exit(1)
-    
+
     pop_arg() # Skip script name
     command = pop_arg()
     if command == "print_error":
@@ -130,5 +130,5 @@ if __name__ == "__main__":
     else:
         print_error(f"Unknown command '{command}'")
         sys.exit(1)
-    
+
     fail_if_errors()

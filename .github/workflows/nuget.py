@@ -16,10 +16,10 @@ def is_valid_version(version: str, forbid_build_metadata: bool = False) -> bool:
     match = package_version_regex.match(version)
     if match is None:
         return False
-    
+
     if forbid_build_metadata and match.group('buildmetadata') is not None:
         return False
-    
+
     return True
 
 def is_preview_version(version: str) -> bool:
@@ -27,7 +27,7 @@ def is_preview_version(version: str) -> bool:
     if match is None:
         gha.print_error(f"Version '{version}' is not a legal semver version string!")
         return True
-    
+
     return match.group('prerelease') is not None
 
 class SemanticVersion:

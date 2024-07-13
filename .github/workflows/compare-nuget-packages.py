@@ -51,11 +51,11 @@ def should_ignore(file: ZipInfo) -> bool:
         return True
     if file.filename.startswith('package/services/metadata/core-properties/') and file.filename.endswith('.psmdcp'):
         return True
-    
+
     # Don't care about explicit directories
     if file.is_dir():
         return True
-    
+
     return False
 
 def nuget_packages_are_equivalent(a_path: Path, b_path: Path, is_snupkg: bool = False) -> bool:
@@ -65,14 +65,14 @@ def nuget_packages_are_equivalent(a_path: Path, b_path: Path, is_snupkg: bool = 
     if a_path.exists() != b_path.exists():
         verbose_log(f"Not equivalent: Only one package actually exists")
         return False
-    
+
     # The package doesn't exist at all, assume mistake unless we're checking the optional symbol packages
     if not a_path.exists():
         if is_snupkg:
             verbose_log("Equivalent: Neither package exists")
             return True
         raise FileNotFoundError(f"Neither package exists: '{a_path}' or '{b_path}'")
-    
+
     # From this point on: Check everything and emit messages for debugging purposes
     is_equivalent = True
 
@@ -109,7 +109,7 @@ def nuget_packages_are_equivalent(a_path: Path, b_path: Path, is_snupkg: bool = 
                 verbose_log(f"Not equivalent: CRCs of '{a_info.filename}' do not match between '{a_path}' and '{b_path}'")
                 is_equivalent = False
                 continue
-            
+
             if a_info.file_size != b_info.file_size:
                 verbose_log(f"Not equivalent: File sizes of '{a_info.filename}' do not match between '{a_path}' and '{b_path}'")
                 is_equivalent = False
@@ -165,7 +165,7 @@ with gha.JobSummary() as md:
     def write_both(line: str = ''):
         print(line)
         md.write_line(line)
-    
+
     print()
     different_packages.sort()
     md.write_line("# Packages with changes\n")
